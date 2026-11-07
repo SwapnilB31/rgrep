@@ -1,4 +1,5 @@
 use core::fmt;
+use std::cmp::min;
 // use std::default;
 use std::env;
 use std::fs;
@@ -176,16 +177,27 @@ fn rgrep(config: &RgrepConfig) {
                 
                 let t_line = if config.ignore_case { line.to_lowercase()} else { line.to_string() };
                 let search_term = if config.ignore_case { config.search_term.to_lowercase() } else { config.search_term.to_string() };
-                
-                let output_line = if config.color_mode.should_color() {
-                    line.replace(&config.search_term.clone(), &config.search_term.clone().red().bold().to_string())
-                } else {
-                    line.to_string()
-                };
 
-                if t_line.contains(&search_term) {
-                    println!("{}:{}\t{}", file_name, lineno, output_line);
-                }
+                let sub_index = t_line.find(&search_term);
+                
+                
+                    if let Some(index) = sub_index{
+
+                        if config.color_mode.should_color() {
+                            let start = index;
+                            let end = index + search_term.len();
+    
+                            let before = &line[..start];
+                            let matched = &line[start..end];
+                            let after = &line[end..];
+    
+                            let output_line = format!("{}{}{}",before, matched.to_string().red().bold(), after);
+                            println!("{}:{}\t{}", file_name, lineno+1, output_line);
+                        } else {
+                            println!("{}:{}\t{}", file_name, lineno+1, line);
+                        }  
+                    } 
+                
             }
         }
         else {

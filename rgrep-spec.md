@@ -1,4 +1,4 @@
-# `rgrep` — Project Specification
+ # `rgrep` — Project Specification
 
 Build a command-line file search utility inspired by `grep`, intentionally scoped as a Rust learning project.
 
